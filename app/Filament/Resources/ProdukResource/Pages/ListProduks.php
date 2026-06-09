@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\DivisiResource\Pages;
+namespace App\Filament\Resources\ProdukResource\Pages;
 
-use App\Filament\Resources\DivisiResource;
+use App\Filament\Resources\ProdukResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListDivisis extends ListRecords
+class ListProduks extends ListRecords
 {
-    protected static string $resource = DivisiResource::class;
+    protected static string $resource = ProdukResource::class;
 
     protected function getHeaderActions(): array
     {
