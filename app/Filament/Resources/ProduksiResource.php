@@ -10,11 +10,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProduksiResource extends Resource
 {
     protected static ?string $model = Produksi::class;
 
+    protected static ?string $modelLabel = 'Produksi';
+    protected static ?string $pluralModelLabel = 'Produksi';
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationGroup = 'Manajemen POS';
     protected static ?string $navigationLabel = 'Produksi';
@@ -52,6 +56,19 @@ class ProduksiResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Produksi')
                     ->dateTime('d M Y H:i'),
+            ])
+            ->filters([
+                Filter::make('tanggal_produksi')
+                    ->form([
+                        Forms\Components\DatePicker::make('tanggal')
+                            ->label('Tanggal Produksi'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['tanggal'] ?? null,
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', $date),
+                        );
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
