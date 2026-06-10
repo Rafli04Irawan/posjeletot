@@ -90,4 +90,8 @@ class KategoriResource extends Resource
             'edit' => Pages\EditKategori::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->role === 'admin';
+    }
 }

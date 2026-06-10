@@ -102,4 +102,8 @@ class BillOfMaterialResource extends Resource
             'edit' => Pages\EditBillOfMaterial::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->role === 'admin';
+    }
 }

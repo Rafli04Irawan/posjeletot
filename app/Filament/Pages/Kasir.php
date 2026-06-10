@@ -188,4 +188,8 @@ class Kasir extends Page
 
         $this->prosesBayar();
     }
+    public static function canAccess(): bool
+    {
+        return in_array(auth()->user()?->role, ['admin', 'pegawai']);
+    }
 }

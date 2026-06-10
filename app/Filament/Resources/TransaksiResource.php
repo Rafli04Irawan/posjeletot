@@ -108,4 +108,8 @@ class TransaksiResource extends Resource
     {
         return parent::getEloquentQuery()->with('details.produk');
     }
+    public static function canViewAny(): bool
+    {
+        return in_array(auth()->user()?->role, ['admin', 'pegawai']);
+    }
 }
