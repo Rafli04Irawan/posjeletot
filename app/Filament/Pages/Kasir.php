@@ -26,7 +26,15 @@ class Kasir extends Page
 
     public function mount()
     {
-        $this->produk = Produk::with('kategori')->get();
+       $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $this->produk = Produk::with('kategori')->get();
+        } else {
+            $this->produk = Produk::with('kategori')
+                ->where('outlet_id', $user->outlet_id)
+                ->get();
+    }
     }
 
     public function tambahKeCart($id)
@@ -84,6 +92,31 @@ class Kasir extends Page
 
         $this->hitungTotal();
     }
+    public function updateQty($id, $qty)
+    {
+        $produk = Produk::find($id);
+
+        if (!$produk) {
+            return;
+        }
+
+        $qty = (int) $qty;
+
+        if ($qty <= 0) {
+            unset($this->cart[$id]);
+            $this->hitungTotal();
+            return;
+        }
+
+        if ($qty > $produk->stok) {
+            session()->flash('error', 'Jumlah melebihi stok yang tersedia!');
+            $this->cart[$id]['qty'] = $produk->stok;
+        } else {
+            $this->cart[$id]['qty'] = $qty;
+        }
+
+        $this->hitungTotal();
+    }
 
     public function hitungTotal()
     {
@@ -132,6 +165,7 @@ class Kasir extends Page
                 $transaksi = Transaksi::create([
                     'total' => $total,
                     'bayar' => $bayar,
+                    'outlet_id' => auth()->user()->outlet_id,
                     'kembalian' => $this->kembalian,
                     'metode_pembayaran' => $this->metodePembayaran,
                 ]);

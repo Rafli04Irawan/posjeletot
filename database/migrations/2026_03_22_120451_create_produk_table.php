@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('kategori_id')->constrained('kategori')->onDelete('cascade');
             $table->string('gambar')->nullable();
 
+            $table->foreignId('outlet_id')->nullable()->constrained('outlets')->nullOnDelete();
+
             $table->timestamps();
             });
         }

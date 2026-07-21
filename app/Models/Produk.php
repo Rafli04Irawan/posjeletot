@@ -34,20 +34,48 @@ class Produk extends Model
             return 0;
         }
 
-        $jumlah = [];
+        $hasil = [];
 
         foreach ($boms as $bom) {
-                if (!$bom->bahanBaku) {
-                continue;
-            }
-                if ((int) $bom->jumlah <= 0) {
+
+            if (!$bom->bahanBaku) {
                 continue;
             }
 
+            $stok = $bom->bahanBaku->stok;
+            $jumlah = $bom->jumlah;
 
-            $jumlah[] = floor((int)$bom->bahanBaku->stok / (int) $bom->jumlah);
+            // KG -> Gram
+            if ($bom->bahanBaku->satuan == 'kg' && $bom->satuan == 'gram') {
+                $stok *= 1000;
+            }
+
+            // Liter -> ml
+            if ($bom->bahanBaku->satuan == 'liter' && $bom->satuan == 'ml') {
+                $stok *= 1000;
+            }
+
+            // Gram -> Kg
+            if ($bom->bahanBaku->satuan == 'gram' && $bom->satuan == 'kg') {
+                $stok /= 1000;
+            }
+
+            // ml -> Liter
+            if ($bom->bahanBaku->satuan == 'ml' && $bom->satuan == 'liter') {
+                $stok /= 1000;
+            }
+
+            if ($jumlah <= 0) {
+                continue;
+            }
+
+            $hasil[] = floor($stok / $jumlah);
         }
 
-        return count($jumlah)  ? min($jumlah) : 0;
+        return empty($hasil) ? 0 : min($hasil);
+    }
+    public function outlet()
+    {
+        return $this->belongsTo(\App\Models\Outlet::class);
     }
 }

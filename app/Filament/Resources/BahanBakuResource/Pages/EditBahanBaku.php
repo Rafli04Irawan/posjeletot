@@ -16,4 +16,13 @@ class EditBahanBaku extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($data['satuan'] == 'kg') {
+            $data['stok'] = $data['stok'] * 1000;
+            $data['satuan'] = 'gram';
+        }
+
+        return $data;
+    }
 }

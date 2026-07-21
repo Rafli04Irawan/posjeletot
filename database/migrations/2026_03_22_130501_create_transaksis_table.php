@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('total');
             $table->integer('bayar');
             $table->integer('kembalian');
+            $table->foreignId('outlet_id')->nullable()->constrained('outlets')->nullOnDelete();
             $table->timestamps();
         });
     }

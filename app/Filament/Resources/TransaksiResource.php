@@ -106,7 +106,13 @@ class TransaksiResource extends Resource
     }
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with('details.produk');
+        $query = parent::getEloquentQuery()->with('details.produk');
+
+        if (auth()->user()?->role === 'pegawai') {
+            $query->where('outlet_id', auth()->user()->outlet_id);
+        }
+
+        return $query;
     }
     public static function canViewAny(): bool
     {

@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProdukResource extends Resource
 {
@@ -63,6 +64,13 @@ class ProdukResource extends Resource
                 ->visibility('public')
                 ->imagePreviewHeight('180')
                 ->maxSize(2048),
+            Forms\Components\Select::make('outlet_id')
+            ->label('Outlet')
+            ->relationship('outlet', 'nama_outlet')
+            ->searchable()
+            ->required()
+            ->visible(fn () => auth()->user()?->role === 'admin')
+            ->default(fn () => auth()->user()?->outlet_id),
         ]);
     }
 
@@ -167,5 +175,15 @@ class ProdukResource extends Resource
     public static function canViewAny(): bool
     {
         return auth()->user()?->role === 'admin';
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()?->role === 'pegawai') {
+            $query->where('outlet_id', auth()->user()->outlet_id);
+        }
+
+        return $query;
     }
 }

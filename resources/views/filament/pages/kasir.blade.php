@@ -129,19 +129,34 @@
                                 </p>
                             </div>
 
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <button wire:click="kurangiQty({{ $id }})"
-                                    style="background:#ef4444; color:white; padding:2px 8px; border-radius:4px;">
-                                    -
-                                </button>
+                           <div style="display:flex; align-items:center; gap:8px;">
+                            <button
+                                wire:click="kurangiQty({{ $id }})"
+                                style="background:#ef4444;color:white;padding:4px 10px;border-radius:6px;">
+                                -
+                            </button>
 
-                                <span style="font-weight:bold;">{{ $item['qty'] }}</span>
+                            <input
+                                type="number"
+                                min="1"
+                                value="{{ $item['qty'] }}"
+                                wire:change="updateQty({{ $id }}, $event.target.value)"
+                                style="
+                                    width:65px;
+                                    text-align:center;
+                                    border:1px solid #d1d5db;
+                                    border-radius:6px;
+                                    padding:4px;
+                                "
+                            >
 
-                                <button wire:click="tambahKeCart({{ $id }})"
-                                    style="background:#22c55e; color:white; padding:2px 8px; border-radius:4px;">
-                                    +
-                                </button>
-                            </div>
+                            <button
+                                wire:click="tambahKeCart({{ $id }})"
+                                style="background:#22c55e;color:white;padding:4px 10px;border-radius:6px;">
+                                +
+                            </button>
+
+                        </div>
                         </div>
                     @empty
                         <p style="color:#9ca3af; text-align:center; margin-top:40px;">

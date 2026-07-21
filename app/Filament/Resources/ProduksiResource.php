@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Outlet;
 
 class ProduksiResource extends Resource
 {
@@ -38,6 +39,11 @@ class ProduksiResource extends Resource
                 ->suffix('pcs')
                 ->required()
                 ->minValue(1),
+            Forms\Components\Select::make('outlet_id')
+            ->label('Outlet')
+            ->relationship('outlet', 'nama_outlet')
+            ->searchable()
+            ->required(),
         ]);
     }
 

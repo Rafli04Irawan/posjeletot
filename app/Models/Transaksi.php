@@ -22,4 +22,8 @@ class Transaksi extends Model
     {
         return $this->hasMany(DetailTransaksi::class);
     }
+    public function outlet()
+    {
+        return $this->belongsTo(\App\Models\Outlet::class);
+    }
 }

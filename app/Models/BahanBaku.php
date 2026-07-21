@@ -19,4 +19,8 @@ class BahanBaku extends Model
     {
         return $this->hasMany(BillOfMaterial::class);
     }
+    public function outlet()
+    {
+        return $this->belongsTo(\App\Models\Outlet::class);
+    }
 }

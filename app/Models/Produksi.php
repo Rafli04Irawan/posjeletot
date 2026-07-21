@@ -21,4 +21,8 @@ class Produksi extends Model
     {
         return $this->hasMany(\App\Models\BillOfMaterial::class, 'produk_id');
     }
+    public function outlet()
+    {
+        return $this->belongsTo(\App\Models\Outlet::class);
+    }
 }
