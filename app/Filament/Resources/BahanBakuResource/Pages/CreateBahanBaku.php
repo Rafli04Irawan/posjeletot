@@ -18,4 +18,5 @@ class CreateBahanBaku extends CreateRecord
 
         return $data;
     }
+    
 }

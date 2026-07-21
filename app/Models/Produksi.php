@@ -11,6 +11,7 @@ class Produksi extends Model
     protected $fillable = [
         'produk_id',
         'jumlah',
+        'outlet_id',
     ];
 
     public function produk()
@@ -23,6 +24,6 @@ class Produksi extends Model
     }
     public function outlet()
     {
-        return $this->belongsTo(\App\Models\Outlet::class);
+        return $this->belongsTo(Outlet::class, 'outlet_id', 'id');
     }
 }

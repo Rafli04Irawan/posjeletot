@@ -12,6 +12,14 @@ class CreateProduksi extends CreateRecord
 {
     protected static string $resource = ProduksiResource::class;
 
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (auth()->user()->role == 'pegawai') {
+            $data['outlet_id'] = auth()->user()->outlet_id;
+        }
+
+        return $data;
+    }
     protected function beforeCreate(): void
     {
         $produk = Produk::with('billOfMaterials.bahanBaku')
@@ -120,6 +128,7 @@ class CreateProduksi extends CreateRecord
 
             }
         }
+        
 
             $produk->increment('stok', $jumlahProduksi);
         });

@@ -95,6 +95,12 @@ class BahanBakuResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->dateTime('d M Y H:i'),
+                Tables\Columns\TextColumn::make('outlet.nama_outlet')
+                    ->label('Outlet')
+                    ->badge()
+                    ->color('success')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

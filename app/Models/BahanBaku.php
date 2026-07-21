@@ -12,6 +12,7 @@ class BahanBaku extends Model
         'nama_bahan',
         'satuan',
         'stok',
+        'outlet_id',
        
     ];
 
@@ -21,6 +22,6 @@ class BahanBaku extends Model
     }
     public function outlet()
     {
-        return $this->belongsTo(\App\Models\Outlet::class);
+        return $this->belongsTo(\App\Models\Outlet::class, 'outlet_id');
     }
 }

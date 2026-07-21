@@ -10,4 +10,8 @@ class Outlet extends Model
         'nama_outlet',
         'alamat',
     ];
+     public function produksis()
+    {
+        return $this->hasMany(Produksi::class);
+    }
 }

@@ -62,6 +62,12 @@ class ProduksiResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Produksi')
                     ->dateTime('d M Y H:i'),
+                Tables\Columns\TextColumn::make('outlet.nama_outlet')
+                    ->label('Outlet')
+                    ->badge()
+                    ->placeholder('-')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Filter::make('tanggal_produksi')
@@ -91,5 +97,10 @@ class ProduksiResource extends Resource
             'index' => Pages\ListProduksis::route('/'),
             'create' => Pages\CreateProduksi::route('/create'),
         ];
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['produk', 'outlet']);
     }
 }
