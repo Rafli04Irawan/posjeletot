@@ -16,11 +16,12 @@ class Transaksi extends Model
         'bayar',
         'kembalian',
         'metode_pembayaran',
+        'outlet_id',
     ];
 
     public function details()
     {
-        return $this->hasMany(DetailTransaksi::class);
+        return $this->hasMany(DetailTransaksi::class, 'transaksi_id', 'id');
     }
     public function outlet()
     {

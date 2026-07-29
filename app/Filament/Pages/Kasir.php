@@ -168,7 +168,9 @@ class Kasir extends Page
                     'outlet_id' => auth()->user()->outlet_id,
                     'kembalian' => $this->kembalian,
                     'metode_pembayaran' => $this->metodePembayaran,
+                    'outlet_id' => auth()->user()->outlet_id,
                 ]);
+              
 
                 foreach ($this->cart as $id => $item) {
                     $produk = Produk::find($id);
@@ -187,6 +189,7 @@ class Kasir extends Page
                         'qty' => (int) $item['qty'],
                         'harga' => (int) $item['harga'],
                     ]);
+
 
                     $produk->decrement('stok', (int) $item['qty']);
                 }
