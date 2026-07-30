@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
     ->default()
     ->id('admin')
-    ->path('admin')
+    ->path('')
     ->darkMode(false)
     ->brandName('POS Jeletot')
     ->login()
