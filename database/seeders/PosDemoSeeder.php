@@ -1,0 +1,166 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\BahanBaku;
+use App\Models\BillOfMaterial;
+use App\Models\DetailTransaksi;
+use App\Models\Kategori;
+use App\Models\Outlet;
+use App\Models\Produksi;
+use App\Models\Produk;
+use App\Models\Transaksi;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+
+class PosDemoSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        Schema::disableForeignKeyConstraints();
+
+        $this->truncateTables([
+            'detail_transaksi',
+            'transaksi',
+            'bill_of_materials',
+            'produksis',
+            'produk',
+            'bahan_bakus',
+            'kategori',
+            'users',
+            'outlets',
+        ]);
+
+        Schema::enableForeignKeyConstraints();
+
+        $outlets = collect([
+            ['nama_outlet' => 'Outlet Pusat', 'alamat' => 'Jl. Merdeka No. 1'],
+            ['nama_outlet' => 'Outlet Cabang 1', 'alamat' => 'Jl. Sudirman No. 10'],
+            ['nama_outlet' => 'Outlet Cabang 2', 'alamat' => 'Jl. Asia Afrika No. 22'],
+        ])->map(function (array $data) {
+            return Outlet::create($data);
+        });
+
+        $categories = collect([
+            ['nama_kategori' => 'Makanan'],
+            ['nama_kategori' => 'Minuman'],
+            ['nama_kategori' => 'Dessert'],
+        ])->map(function (array $data) {
+            return Kategori::create($data);
+        });
+
+        $bahanBaku = collect([
+            ['nama_bahan' => 'Beras', 'satuan' => 'kg', 'stok' => 100, 'outlet_id' => $outlets[0]->id],
+            ['nama_bahan' => 'Ayam', 'satuan' => 'kg', 'stok' => 40, 'outlet_id' => $outlets[0]->id],
+            ['nama_bahan' => 'Sapi', 'satuan' => 'kg', 'stok' => 35, 'outlet_id' => $outlets[1]->id],
+            ['nama_bahan' => 'Sayur', 'satuan' => 'kg', 'stok' => 50, 'outlet_id' => $outlets[1]->id],
+            ['nama_bahan' => 'Minyak', 'satuan' => 'liter', 'stok' => 20, 'outlet_id' => $outlets[2]->id],
+            ['nama_bahan' => 'Kopi', 'satuan' => 'gram', 'stok' => 5000, 'outlet_id' => $outlets[2]->id],
+            ['nama_bahan' => 'Susu', 'satuan' => 'liter', 'stok' => 30, 'outlet_id' => $outlets[0]->id],
+            ['nama_bahan' => 'Gula', 'satuan' => 'kg', 'stok' => 25, 'outlet_id' => $outlets[1]->id],
+        ])->map(function (array $data) {
+            return BahanBaku::create($data);
+        });
+
+        $products = collect([
+            ['nama_produk' => 'Nasi Goreng', 'deskripsi' => 'Nasi goreng spesial', 'harga' => 15000, 'stok' => 20, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[0]->id],
+            ['nama_produk' => 'Mie Ayam', 'deskripsi' => 'Mie ayam favorit', 'harga' => 13000, 'stok' => 18, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[0]->id],
+            ['nama_produk' => 'Sate Sapi', 'deskripsi' => 'Sate sapi khas', 'harga' => 22000, 'stok' => 12, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[1]->id],
+            ['nama_produk' => 'Es Teh', 'deskripsi' => 'Es teh manis', 'harga' => 8000, 'stok' => 25, 'kategori_id' => $categories[1]->id, 'gambar' => null, 'outlet_id' => $outlets[1]->id],
+            ['nama_produk' => 'Kopi Latte', 'deskripsi' => 'Kopi latte hangat', 'harga' => 12000, 'stok' => 15, 'kategori_id' => $categories[1]->id, 'gambar' => null, 'outlet_id' => $outlets[2]->id],
+            ['nama_produk' => 'Pudding Coklat', 'deskripsi' => 'Dessert lembut', 'harga' => 10000, 'stok' => 10, 'kategori_id' => $categories[2]->id, 'gambar' => null, 'outlet_id' => $outlets[2]->id],
+        ])->map(function (array $data) {
+            return Produk::create($data);
+        });
+
+        User::create([
+            'name' => 'Admin POS',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('password123'),
+            'role' => 'admin',
+            'outlet_id' => $outlets[0]->id,
+        ]);
+
+        User::create([
+            'name' => 'Cibiru',
+            'email' => 'cibiru@gmail.com',
+            'password' => Hash::make('password123'),
+            'role' => 'pegawai',
+            'outlet_id' => $outlets[1]->id,
+        ]);
+
+        User::create([
+            'name' => 'Bumhar',
+            'email' => 'bumhar@gmai.com',
+            'password' => Hash::make('password123'),
+            'role' => 'pegawai',
+            'outlet_id' => $outlets[2]->id,
+        ]);
+
+        $bomData = [
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 200, 'satuan' => 'gram'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[1]->id, 'jumlah' => 150, 'satuan' => 'gram'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[4]->id, 'jumlah' => 50, 'satuan' => 'ml'],
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 180, 'satuan' => 'gram'],
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[1]->id, 'jumlah' => 100, 'satuan' => 'gram'],
+            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[2]->id, 'jumlah' => 200, 'satuan' => 'gram'],
+            ['produk_id' => $products[3]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 20, 'satuan' => 'gram'],
+            ['produk_id' => $products[3]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 100, 'satuan' => 'ml'],
+            ['produk_id' => $products[4]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 25, 'satuan' => 'gram'],
+            ['produk_id' => $products[4]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 50, 'satuan' => 'ml'],
+            ['produk_id' => $products[5]->id, 'bahan_baku_id' => $bahanBaku[7]->id, 'jumlah' => 40, 'satuan' => 'gram'],
+            ['produk_id' => $products[5]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 100, 'satuan' => 'ml'],
+        ];
+
+        foreach ($bomData as $item) {
+            BillOfMaterial::create($item);
+        }
+
+        Produksi::create(['produk_id' => $products[0]->id, 'jumlah' => 10, 'outlet_id' => $outlets[0]->id]);
+        Produksi::create(['produk_id' => $products[3]->id, 'jumlah' => 8, 'outlet_id' => $outlets[1]->id]);
+        Produksi::create(['produk_id' => $products[5]->id, 'jumlah' => 5, 'outlet_id' => $outlets[2]->id]);
+
+        $transactions = [
+            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[0]->id, 2, 15000], [$products[1]->id, 1, 13000]]],
+            ['outlet_id' => $outlets[1]->id, 'metode_pembayaran' => 'qris', 'items' => [[$products[2]->id, 1, 22000], [$products[3]->id, 2, 8000]]],
+            ['outlet_id' => $outlets[2]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[4]->id, 1, 12000], [$products[5]->id, 2, 10000]]],
+            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'transfer', 'items' => [[$products[0]->id, 1, 15000], [$products[3]->id, 1, 8000]]],
+        ];
+
+        foreach ($transactions as $index => $transactionData) {
+            $total = collect($transactionData['items'])->sum(fn ($item) => $item[1] * $item[2]);
+            $bayar = $total + 3000;
+            $kembalian = $bayar - $total;
+
+            $transaksi = Transaksi::create([
+                'total' => $total,
+                'bayar' => $bayar,
+                'kembalian' => $kembalian,
+                'metode_pembayaran' => $transactionData['metode_pembayaran'],
+                'outlet_id' => $transactionData['outlet_id'],
+            ]);
+
+            foreach ($transactionData['items'] as $item) {
+                DetailTransaksi::create([
+                    'transaksi_id' => $transaksi->id,
+                    'produk_id' => $item[0],
+                    'qty' => $item[1],
+                    'harga' => $item[2],
+                ]);
+            }
+        }
+    }
+
+    protected function truncateTables(array $tables): void
+    {
+        foreach ($tables as $table) {
+            DB::table($table)->truncate();
+        }
+    }
+}
