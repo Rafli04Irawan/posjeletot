@@ -174,7 +174,13 @@ class ProdukResource extends Resource
     }
     public static function canViewAny(): bool
     {
-        return auth()->user()?->role === 'admin';
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('produk');
     }
     public static function getEloquentQuery(): Builder
     {

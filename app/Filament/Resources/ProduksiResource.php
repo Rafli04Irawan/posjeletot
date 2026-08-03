@@ -98,6 +98,18 @@ class ProduksiResource extends Resource
             'create' => Pages\CreateProduksi::route('/create'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('produksi');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

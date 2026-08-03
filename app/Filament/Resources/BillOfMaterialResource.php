@@ -104,6 +104,12 @@ class BillOfMaterialResource extends Resource
     }
     public static function canViewAny(): bool
     {
-        return auth()->user()?->role === 'admin';
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('bill_of_material');
     }
 }

@@ -227,6 +227,12 @@ class Kasir extends Page
     }
     public static function canAccess(): bool
     {
-        return in_array(auth()->user()?->role, ['admin', 'pegawai']);
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('kasir') || in_array($user->role, ['pegawai', 'kasir']);
     }
 }

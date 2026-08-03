@@ -1,0 +1,1 @@
+{"version":2,"defects":{"Tests\\Unit\\UserMenuPermissionTest::test_admin_always_has_access_and_user_without_permission_is_denied":8},"times":{"Tests\\Unit\\UserMenuPermissionTest::test_admin_always_has_access_and_user_without_permission_is_denied":0.037}}

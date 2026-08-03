@@ -77,4 +77,15 @@ class OutletResource extends Resource
             'edit' => Pages\EditOutlet::route('/{record}/edit'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('outlet');
+    }
 }

@@ -116,6 +116,12 @@ class TransaksiResource extends Resource
     }
     public static function canViewAny(): bool
     {
-        return in_array(auth()->user()?->role, ['admin', 'pegawai']);
+        $user = auth()->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('transaksi') || in_array($user->role, ['pegawai', 'kasir']);
     }
 }

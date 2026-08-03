@@ -19,6 +19,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role',
         'outlet_id',
+        'menu_permissions',
     ];
 
     protected $hidden = [
@@ -28,6 +29,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'menu_permissions' => 'array',
     ];
 
     public function outlet()
@@ -40,6 +42,16 @@ class User extends Authenticatable implements FilamentUser
         return in_array($this->role, [
             'admin',
             'pegawai',
+            'kasir',
         ]);
+    }
+
+    public function hasMenuPermission(string $menu): bool
+    {
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        return in_array($menu, $this->menu_permissions ?? [], true);
     }
 }
