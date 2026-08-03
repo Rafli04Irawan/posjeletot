@@ -8,7 +8,13 @@ class CustomDashboard extends Dashboard
 {
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()?->role === 'admin' || auth()->user()?->hasMenuPermission('dashboard');
+        $user = auth()->user();
+
+        if (!$user instanceof \App\Models\User) {
+            return false;
+        }
+
+        return $user->role === 'admin' || $user->hasMenuPermission('dashboard');
     }
 
     public static function canAccess(): bool

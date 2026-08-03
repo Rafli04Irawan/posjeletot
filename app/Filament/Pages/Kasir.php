@@ -22,7 +22,7 @@ class Kasir extends Page
     public $kembalian = 0;
     public $total = 0;
     public $showModalBayar = false;
-    public $metodePembayaran = null;
+    public ?string $metodePembayaran = null;
 
     public function mount()
     {
@@ -37,7 +37,7 @@ class Kasir extends Page
     }
     }
 
-    public function tambahKeCart($id)
+    public function tambahKeCart(int $id)
     {
         $produk = Produk::find($id);
 
@@ -69,7 +69,7 @@ class Kasir extends Page
 
         $this->hitungTotal();
     }
-    public function updatedBayarFormatted($value)
+    public function updatedBayarFormatted(string $value)
     {
         $angka = preg_replace('/[^0-9]/', '', $value);
 
@@ -80,7 +80,7 @@ class Kasir extends Page
 
         $this->kembalian = max(0, $this->bayar - (int) $this->total);
     }
-    public function kurangiQty($id)
+    public function kurangiQty(int $id)
     {
         if (isset($this->cart[$id])) {
             $this->cart[$id]['qty']--;
@@ -92,7 +92,7 @@ class Kasir extends Page
 
         $this->hitungTotal();
     }
-    public function updateQty($id, $qty)
+    public function updateQty(int $id, int $qty)
     {
         $produk = Produk::find($id);
 
@@ -131,7 +131,7 @@ class Kasir extends Page
     {
         $this->kembalian = max(0, (int) $this->bayar - (int) $this->total);
     }
-    public function pilihNominal($nominal)
+    public function pilihNominal(int $nominal)
     {
         $this->bayar = $nominal;
         $this->bayarFormatted = number_format($nominal, 0, ',', '.');
@@ -168,7 +168,6 @@ class Kasir extends Page
                     'outlet_id' => auth()->user()->outlet_id,
                     'kembalian' => $this->kembalian,
                     'metode_pembayaran' => $this->metodePembayaran,
-                    'outlet_id' => auth()->user()->outlet_id,
                 ]);
               
 
@@ -219,7 +218,7 @@ class Kasir extends Page
         $this->showModalBayar = true;
     }
 
-    public function pilihMetode($metode)
+    public function pilihMetode(string $metode)
     {
         $this->metodePembayaran = $metode;
 
@@ -229,7 +228,7 @@ class Kasir extends Page
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if (!$user instanceof \App\Models\User) {
             return false;
         }
 

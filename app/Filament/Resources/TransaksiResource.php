@@ -118,7 +118,7 @@ class TransaksiResource extends Resource
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if (!$user instanceof \App\Models\User) {
             return false;
         }
 
