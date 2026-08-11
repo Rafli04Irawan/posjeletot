@@ -34,13 +34,46 @@ class ListTransaksis extends ListRecords
 
                     $transaksi = $query->latest()->get();
 
-                    $pdf = Pdf::loadView(
-                        'pdf.laporan-transaksi',
-                        compact('transaksi')
-                    );
+                    $nomorSurat = 'LAP-TRX/' . now()->format('YmdHis');
+                    $tanggalLaporan = now()->format('d F Y');
+                    $periode = $transaksi->count()
+                        ? $transaksi->min('created_at')->format('d M Y') . ' s/d ' . $transaksi->max('created_at')->format('d M Y')
+                        : 'Semua Periode';
+
+                    $view = auth()->user()->role === 'admin'
+                        ? 'pdf.laporan-transaksi-admin'
+                        : 'pdf.laporan-transaksi';
+
+                    if (auth()->user()->role === 'admin') {
+                        $summary = $transaksi
+                            ->groupBy(function ($item) {
+                                return ($item->outlet?->nama_outlet ?? 'Outlet Tidak Diketahui') . '||' . $item->created_at->format('Y-m-d');
+                            })
+                            ->map(function ($items, $key) {
+                                [$outlet, $date] = explode('||', $key);
+
+                                return [
+                                    'outlet' => $outlet,
+                                    'tanggal' => $items->first()->created_at->format('d-m-Y'),
+                                    'total' => $items->sum('total'),
+                                    'jumlah_transaksi' => $items->count(),
+                                ];
+                            })
+                            ->values();
+
+                        $pdf = Pdf::loadView(
+                            $view,
+                            compact('summary', 'nomorSurat', 'tanggalLaporan', 'periode')
+                        );
+                    } else {
+                        $pdf = Pdf::loadView(
+                            $view,
+                            compact('transaksi', 'nomorSurat', 'tanggalLaporan', 'periode')
+                        );
+                    }
 
                     return response()->streamDownload(
-                        fn()=>print($pdf->output()),
+                        fn() => print($pdf->output()),
                         'Laporan-Transaksi.pdf'
                     );
 

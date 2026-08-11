@@ -48,33 +48,52 @@ class PosDemoSeeder extends Seeder
         });
 
         $categories = collect([
-            ['nama_kategori' => 'Makanan'],
-            ['nama_kategori' => 'Minuman'],
-            ['nama_kategori' => 'Dessert'],
+            ['nama_kategori' => 'Cireng'],
+            ['nama_kategori' => 'Gehu'],
         ])->map(function (array $data) {
             return Kategori::create($data);
         });
 
         $bahanBaku = collect([
-            ['nama_bahan' => 'Beras', 'satuan' => 'kg', 'stok' => 100, 'outlet_id' => $outlets[0]->id],
-            ['nama_bahan' => 'Ayam', 'satuan' => 'kg', 'stok' => 40, 'outlet_id' => $outlets[0]->id],
-            ['nama_bahan' => 'Sapi', 'satuan' => 'kg', 'stok' => 35, 'outlet_id' => $outlets[1]->id],
-            ['nama_bahan' => 'Sayur', 'satuan' => 'kg', 'stok' => 50, 'outlet_id' => $outlets[1]->id],
-            ['nama_bahan' => 'Minyak', 'satuan' => 'liter', 'stok' => 20, 'outlet_id' => $outlets[2]->id],
-            ['nama_bahan' => 'Kopi', 'satuan' => 'gram', 'stok' => 5000, 'outlet_id' => $outlets[2]->id],
-            ['nama_bahan' => 'Susu', 'satuan' => 'liter', 'stok' => 30, 'outlet_id' => $outlets[0]->id],
-            ['nama_bahan' => 'Gula', 'satuan' => 'kg', 'stok' => 25, 'outlet_id' => $outlets[1]->id],
+            ['nama_bahan' => 'Tepung Tapioka', 'satuan' => 'kg', 'stok' => 50, 'outlet_id' => $outlets[0]->id],
+            ['nama_bahan' => 'Keju', 'satuan' => 'gram', 'stok' => 5000, 'outlet_id' => $outlets[0]->id],
+            ['nama_bahan' => 'Cabai Merah', 'satuan' => 'gram', 'stok' => 3000, 'outlet_id' => $outlets[1]->id],
+            ['nama_bahan' => 'Tahu', 'satuan' => 'kg', 'stok' => 40, 'outlet_id' => $outlets[1]->id],
+            ['nama_bahan' => 'Minyak Goreng', 'satuan' => 'liter', 'stok' => 60, 'outlet_id' => $outlets[2]->id],
+            ['nama_bahan' => 'Garam', 'satuan' => 'kg', 'stok' => 15, 'outlet_id' => $outlets[2]->id],
+            ['nama_bahan' => 'Air', 'satuan' => 'liter', 'stok' => 200, 'outlet_id' => $outlets[0]->id],
         ])->map(function (array $data) {
             return BahanBaku::create($data);
         });
 
         $products = collect([
-            ['nama_produk' => 'Nasi Goreng', 'deskripsi' => 'Nasi goreng spesial', 'harga' => 15000, 'stok' => 20, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[0]->id],
-            ['nama_produk' => 'Mie Ayam', 'deskripsi' => 'Mie ayam favorit', 'harga' => 13000, 'stok' => 18, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[0]->id],
-            ['nama_produk' => 'Sate Sapi', 'deskripsi' => 'Sate sapi khas', 'harga' => 22000, 'stok' => 12, 'kategori_id' => $categories[0]->id, 'gambar' => null, 'outlet_id' => $outlets[1]->id],
-            ['nama_produk' => 'Es Teh', 'deskripsi' => 'Es teh manis', 'harga' => 8000, 'stok' => 25, 'kategori_id' => $categories[1]->id, 'gambar' => null, 'outlet_id' => $outlets[1]->id],
-            ['nama_produk' => 'Kopi Latte', 'deskripsi' => 'Kopi latte hangat', 'harga' => 12000, 'stok' => 15, 'kategori_id' => $categories[1]->id, 'gambar' => null, 'outlet_id' => $outlets[2]->id],
-            ['nama_produk' => 'Pudding Coklat', 'deskripsi' => 'Dessert lembut', 'harga' => 10000, 'stok' => 10, 'kategori_id' => $categories[2]->id, 'gambar' => null, 'outlet_id' => $outlets[2]->id],
+            [
+                'nama_produk' => 'Cireng Keju',
+                'deskripsi' => 'Cireng renyah dengan keju leleh.',
+                'harga' => 8000,
+                'stok' => 40,
+                'kategori_id' => $categories[0]->id,
+                'gambar' => null,
+                'outlet_id' => $outlets[0]->id,
+            ],
+            [
+                'nama_produk' => 'Cireng Pedas',
+                'deskripsi' => 'Cireng pedas dengan sambal cabai.',
+                'harga' => 7500,
+                'stok' => 35,
+                'kategori_id' => $categories[0]->id,
+                'gambar' => null,
+                'outlet_id' => $outlets[1]->id,
+            ],
+            [
+                'nama_produk' => 'Gehu Pedas',
+                'deskripsi' => 'Gehu tahu pedas dengan bumbu rumah.',
+                'harga' => 9000,
+                'stok' => 30,
+                'kategori_id' => $categories[1]->id,
+                'gambar' => null,
+                'outlet_id' => $outlets[2]->id,
+            ],
         ])->map(function (array $data) {
             return Produk::create($data);
         });
@@ -88,52 +107,54 @@ class PosDemoSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Cibiru',
-            'email' => 'cibiru@gmail.com',
+            'name' => 'Pegawai Cabang 1',
+            'email' => 'pegawai1@gmail.com',
             'password' => Hash::make('password123'),
             'role' => 'pegawai',
             'outlet_id' => $outlets[1]->id,
         ]);
 
         User::create([
-            'name' => 'Bumhar',
-            'email' => 'bumhar@gmai.com',
+            'name' => 'Pegawai Cabang 2',
+            'email' => 'pegawai2@gmail.com',
             'password' => Hash::make('password123'),
             'role' => 'pegawai',
             'outlet_id' => $outlets[2]->id,
         ]);
 
         $bomData = [
-            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 200, 'satuan' => 'gram'],
-            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[1]->id, 'jumlah' => 150, 'satuan' => 'gram'],
-            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[4]->id, 'jumlah' => 50, 'satuan' => 'ml'],
-            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 180, 'satuan' => 'gram'],
-            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[1]->id, 'jumlah' => 100, 'satuan' => 'gram'],
-            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[2]->id, 'jumlah' => 200, 'satuan' => 'gram'],
-            ['produk_id' => $products[3]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 20, 'satuan' => 'gram'],
-            ['produk_id' => $products[3]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 100, 'satuan' => 'ml'],
-            ['produk_id' => $products[4]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 25, 'satuan' => 'gram'],
-            ['produk_id' => $products[4]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 50, 'satuan' => 'ml'],
-            ['produk_id' => $products[5]->id, 'bahan_baku_id' => $bahanBaku[7]->id, 'jumlah' => 40, 'satuan' => 'gram'],
-            ['produk_id' => $products[5]->id, 'bahan_baku_id' => $bahanBaku[6]->id, 'jumlah' => 100, 'satuan' => 'ml'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 170, 'satuan' => 'gram'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[1]->id, 'jumlah' => 40, 'satuan' => 'gram'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[4]->id, 'jumlah' => 15, 'satuan' => 'ml'],
+            ['produk_id' => $products[0]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 3, 'satuan' => 'gram'],
+
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[0]->id, 'jumlah' => 170, 'satuan' => 'gram'],
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[2]->id, 'jumlah' => 25, 'satuan' => 'gram'],
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[4]->id, 'jumlah' => 15, 'satuan' => 'ml'],
+            ['produk_id' => $products[1]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 3, 'satuan' => 'gram'],
+
+            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[3]->id, 'jumlah' => 140, 'satuan' => 'gram'],
+            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[2]->id, 'jumlah' => 25, 'satuan' => 'gram'],
+            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[4]->id, 'jumlah' => 15, 'satuan' => 'ml'],
+            ['produk_id' => $products[2]->id, 'bahan_baku_id' => $bahanBaku[5]->id, 'jumlah' => 3, 'satuan' => 'gram'],
         ];
 
         foreach ($bomData as $item) {
             BillOfMaterial::create($item);
         }
 
-        Produksi::create(['produk_id' => $products[0]->id, 'jumlah' => 10, 'outlet_id' => $outlets[0]->id]);
-        Produksi::create(['produk_id' => $products[3]->id, 'jumlah' => 8, 'outlet_id' => $outlets[1]->id]);
-        Produksi::create(['produk_id' => $products[5]->id, 'jumlah' => 5, 'outlet_id' => $outlets[2]->id]);
+        Produksi::create(['produk_id' => $products[0]->id, 'jumlah' => 12, 'outlet_id' => $outlets[0]->id]);
+        Produksi::create(['produk_id' => $products[1]->id, 'jumlah' => 10, 'outlet_id' => $outlets[1]->id]);
+        Produksi::create(['produk_id' => $products[2]->id, 'jumlah' => 8, 'outlet_id' => $outlets[2]->id]);
 
         $transactions = [
-            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[0]->id, 2, 15000], [$products[1]->id, 1, 13000]]],
-            ['outlet_id' => $outlets[1]->id, 'metode_pembayaran' => 'qris', 'items' => [[$products[2]->id, 1, 22000], [$products[3]->id, 2, 8000]]],
-            ['outlet_id' => $outlets[2]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[4]->id, 1, 12000], [$products[5]->id, 2, 10000]]],
-            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'transfer', 'items' => [[$products[0]->id, 1, 15000], [$products[3]->id, 1, 8000]]],
+            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[0]->id, 2, 8000], [$products[2]->id, 1, 9000]]],
+            ['outlet_id' => $outlets[1]->id, 'metode_pembayaran' => 'qris', 'items' => [[$products[1]->id, 3, 7500]]],
+            ['outlet_id' => $outlets[2]->id, 'metode_pembayaran' => 'cash', 'items' => [[$products[2]->id, 2, 9000], [$products[0]->id, 1, 8000]]],
+            ['outlet_id' => $outlets[0]->id, 'metode_pembayaran' => 'transfer', 'items' => [[$products[1]->id, 1, 7500], [$products[2]->id, 1, 9000]]],
         ];
 
-        foreach ($transactions as $index => $transactionData) {
+        foreach ($transactions as $transactionData) {
             $total = collect($transactionData['items'])->sum(fn ($item) => $item[1] * $item[2]);
             $bayar = $total + 3000;
             $kembalian = $bayar - $total;
