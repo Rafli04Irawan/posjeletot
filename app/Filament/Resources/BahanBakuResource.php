@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -18,7 +19,7 @@ class BahanBakuResource extends Resource
     protected static ?string $modelLabel = 'Bahan Baku';
     protected static ?string $pluralModelLabel = 'Bahan Baku';
     protected static ?string $navigationIcon = 'heroicon-o-cube';
-    protected static ?string $navigationGroup = 'Manajemen POS';
+    protected static ?string $navigationGroup = 'Persediaan';
     protected static ?string $navigationLabel = 'Bahan Baku';
 
     public static function form(Form $form): Form
@@ -60,6 +61,12 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('kelompok_persediaan')
+                    ->label('Kelompok')
+                    ->getStateUsing(fn (BahanBaku $record): string => $record->kelompokPersediaan())
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Global' ? 'warning' : 'success'),
+
                 Tables\Columns\TextColumn::make('nama_bahan')
                     ->label('Nama Bahan')
                     ->searchable(),
@@ -102,6 +109,19 @@ class BahanBakuResource extends Resource
                     ->sortable()
                     ->searchable(),
             ])
+                    ->groups([
+                    Group::make('kelompok_persediaan')
+                        ->label('Kelompok Persediaan')
+                        ->getKeyFromRecordUsing(fn (BahanBaku $record): string => $record->kelompokPersediaan())
+                        ->getTitleFromRecordUsing(fn (BahanBaku $record): string => $record->kelompokPersediaan())
+                        ->groupQueryUsing(fn (Builder $query): Builder => $query)
+                        ->orderQueryUsing(fn (Builder $query, string $direction): Builder => $query->orderBy('nama_bahan', $direction))
+                        ->collapsible(),
+                        Group::make('outlet.nama_outlet')
+                            ->label('Outlet')
+                            ->collapsible(),
+                    ])
+                    ->defaultGroup('kelompok_persediaan')
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -131,7 +151,7 @@ class BahanBakuResource extends Resource
     }
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->with('produkTerpakai');
 
         if (auth()->user()?->role === 'pegawai') {
             $query->where('outlet_id', auth()->user()->outlet_id);

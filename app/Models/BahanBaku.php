@@ -18,7 +18,28 @@ class BahanBaku extends Model
 
     public function billOfMaterials()
     {
-        return $this->hasMany(BillOfMaterial::class);
+        return $this->hasMany(BillOfMaterial::class, 'bahan_baku_id');
+    }
+
+    public function produkTerpakai()
+    {
+        return $this->belongsToMany(
+            Produk::class,
+            'bill_of_materials',
+            'bahan_baku_id',
+            'produk_id'
+        )->distinct();
+    }
+
+    public function kelompokPersediaan(): string
+    {
+        $produk = $this->relationLoaded('produkTerpakai')
+            ? $this->produkTerpakai
+            : $this->produkTerpakai()->get();
+
+        return $produk->count() === 1
+            ? $produk->first()->nama_produk
+            : 'Global';
     }
     public function outlet()
     {

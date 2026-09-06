@@ -100,7 +100,11 @@
                             Rp {{ number_format($item->harga, 0, ',', '.') }}
                         </p>
 
-                        <p style="font-size: 12px; margin: 0; color: {{ $item->stok > 0 ? '#16a34a' : '#dc2626' }};">
+                        @if ($item->stok > 0)
+                        <p style="font-size: 12px; margin: 0; color: #16a34a;">
+                        @else
+                        <p style="font-size: 12px; margin: 0; color: #dc2626;">
+                        @endif
                             Stok: {{ $item->stok }}
                         </p>
                     </div>
@@ -243,7 +247,8 @@
                 </button>
 
                 <button wire:click="pilihMetode('qris')"
-                    style="width:100%; padding:12px; margin-bottom:8px; border-radius:6px; color:white; background:#9333ea;">
+                    @disabled($this->bayar > $this->total)
+                    style="width:100%; padding:12px; margin-bottom:8px; border-radius:6px; color:white; background:#9333ea; opacity:{{ $this->bayar > $this->total ? '0.5' : '1' }}; cursor:{{ $this->bayar > $this->total ? 'not-allowed' : 'pointer' }};">
                     📱 QRIS
                 </button>
 

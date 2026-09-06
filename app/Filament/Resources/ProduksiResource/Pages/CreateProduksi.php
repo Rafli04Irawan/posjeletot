@@ -22,9 +22,7 @@ class CreateProduksi extends CreateRecord
     }
     protected function beforeCreate(): void
     {
-        $produk = Produk::with('billOfMaterials.bahanBaku')
-            ->find($this->data['produk_id']);
-
+        $produk = Produk::find($this->data['produk_id']);
         $jumlahProduksi = (int) $this->data['jumlah'];
 
         if (!$produk) {
@@ -46,49 +44,19 @@ class CreateProduksi extends CreateRecord
             $this->halt();
         }
 
-        foreach ($produk->billOfMaterials as $bom) {
-
-        $kebutuhan = $bom->jumlah * $jumlahProduksi;
-
-        $stokBahan = $bom->bahanBaku->stok;
-
-        /*
-        |-----------------------------
-        | Konversi satuan stok
-        |-----------------------------
-        */
-
-        if ($bom->bahanBaku->satuan == 'kg' && $bom->satuan == 'gram') {
-            $stokBahan *= 1000;
-        }
-
-        if ($bom->bahanBaku->satuan == 'liter' && $bom->satuan == 'ml') {
-            $stokBahan *= 1000;
-        }
-
-        if ($bom->bahanBaku->satuan == 'gram' && $bom->satuan == 'kg') {
-            $stokBahan /= 1000;
-        }
-
-        if ($bom->bahanBaku->satuan == 'ml' && $bom->satuan == 'liter') {
-            $stokBahan /= 1000;
-        }
-
-        if ($stokBahan < $kebutuhan) {
+        $perhitungan = $produk->hitungProduksi($jumlahProduksi);
+        if ($jumlahProduksi > $perhitungan['maksimal']) {
+            $kekurangan = collect($perhitungan['kekurangan'])
+                ->map(fn (array $item) => $item['nama'] . ' (butuh ' . number_format($item['dibutuhkan'], 0, ',', '.') . ' ' . $item['satuan'] . ', tersedia ' . number_format($item['tersedia'], 0, ',', '.') . ' ' . $item['satuan'] . ')')
+                ->implode('; ');
 
             Notification::make()
                 ->title('Stok bahan tidak cukup')
-                ->body(
-                    $bom->bahanBaku->nama_bahan .
-                    ' kurang. Dibutuhkan ' .
-                    number_format($kebutuhan,0,',','.') .
-                    ' ' . $bom->satuan
-                )
+                ->body('Maksimal dapat dibuat ' . number_format($perhitungan['maksimal'], 0, ',', '.') . ' pcs. ' . $kekurangan)
                 ->danger()
                 ->send();
 
             $this->halt();
-            }
         }
     }
 
@@ -106,27 +74,19 @@ class CreateProduksi extends CreateRecord
 
             $bahan = $bom->bahanBaku;
 
-            if ($bahan->satuan == 'kg' && $bom->satuan == 'gram') {
+            $kebutuhanDalamStok = $kebutuhan;
 
-                $stokGram = ($bahan->stok * 1000) - $kebutuhan;
-
-                $bahan->update([
-                    'stok' => $stokGram / 1000
-                ]);
-
-            } elseif ($bahan->satuan == 'liter' && $bom->satuan == 'ml') {
-
-                $stokMl = ($bahan->stok * 1000) - $kebutuhan;
-
-                $bahan->update([
-                    'stok' => $stokMl / 1000
-                ]);
-
-            } else {
-
-                $bahan->decrement('stok', $kebutuhan);
-
+            if ($bahan->satuan === 'kg' && $bom->satuan === 'gram') {
+                $kebutuhanDalamStok = $kebutuhan / 1000;
+            } elseif ($bahan->satuan === 'liter' && $bom->satuan === 'ml') {
+                $kebutuhanDalamStok = $kebutuhan / 1000;
+            } elseif ($bahan->satuan === 'gram' && $bom->satuan === 'kg') {
+                $kebutuhanDalamStok = $kebutuhan * 1000;
+            } elseif ($bahan->satuan === 'ml' && $bom->satuan === 'liter') {
+                $kebutuhanDalamStok = $kebutuhan * 1000;
             }
+
+            $bahan->decrement('stok', $kebutuhanDalamStok);
         }
         
 

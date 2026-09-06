@@ -8,9 +8,9 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class ProdukTerlarisWidget extends BaseWidget
+class ProdukTerlarisHarianWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Produk Terlaris Minggu Ini';
+    protected static ?string $heading = 'Produk Terlaris Hari Ini per Outlet';
 
     public function table(Table $table): Table
     {
@@ -19,10 +19,7 @@ class ProdukTerlarisWidget extends BaseWidget
                 DetailTransaksi::query()
                     ->join('transaksi', 'transaksi.id', '=', 'detail_transaksi.transaksi_id')
                     ->selectRaw('MAX(detail_transaksi.id) as id, MAX(detail_transaksi.transaksi_id) as transaksi_id, detail_transaksi.produk_id, transaksi.outlet_id, SUM(detail_transaksi.qty) as total_terjual')
-                    ->whereBetween('transaksi.created_at', [
-                    now()->startOfWeek(),
-                    now()->endOfWeek(),
-                    ])
+                    ->whereDate('transaksi.created_at', today())
                     ->with(['produk', 'transaksi.outlet'])
                     ->groupBy('detail_transaksi.produk_id', 'transaksi.outlet_id')
                     ->orderByDesc('total_terjual')

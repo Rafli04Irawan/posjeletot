@@ -28,51 +28,61 @@ class Produk extends Model
     }
     public function jumlahBisaDibuat()
     {
+        return $this->hitungProduksi()['maksimal'];
+    }
+
+    public function hitungProduksi(int $jumlahDiminta = 0): array
+    {
         $boms = $this->billOfMaterials()->with('bahanBaku')->get();
-
-        if ($boms->isEmpty()) {
-            return 0;
-        }
-
-        $hasil = [];
+        $kapasitas = [];
+        $kekurangan = [];
 
         foreach ($boms as $bom) {
-
-            if (!$bom->bahanBaku) {
+            if (!$bom->bahanBaku || $bom->jumlah <= 0) {
                 continue;
             }
 
-            $stok = $bom->bahanBaku->stok;
-            $jumlah = $bom->jumlah;
+            $stok = $this->stokDalamSatuanBom($bom);
+            $kapasitas[] = (int) floor($stok / $bom->jumlah);
 
-            // KG -> Gram
-            if ($bom->bahanBaku->satuan == 'kg' && $bom->satuan == 'gram') {
-                $stok *= 1000;
+            $kebutuhan = $bom->jumlah * $jumlahDiminta;
+            if ($jumlahDiminta > 0 && $stok < $kebutuhan) {
+                $kekurangan[] = [
+                    'nama' => $bom->bahanBaku->nama_bahan,
+                    'dibutuhkan' => $kebutuhan,
+                    'tersedia' => $stok,
+                    'satuan' => $bom->satuan,
+                ];
             }
-
-            // Liter -> ml
-            if ($bom->bahanBaku->satuan == 'liter' && $bom->satuan == 'ml') {
-                $stok *= 1000;
-            }
-
-            // Gram -> Kg
-            if ($bom->bahanBaku->satuan == 'gram' && $bom->satuan == 'kg') {
-                $stok /= 1000;
-            }
-
-            // ml -> Liter
-            if ($bom->bahanBaku->satuan == 'ml' && $bom->satuan == 'liter') {
-                $stok /= 1000;
-            }
-
-            if ($jumlah <= 0) {
-                continue;
-            }
-
-            $hasil[] = floor($stok / $jumlah);
         }
 
-        return empty($hasil) ? 0 : min($hasil);
+        return [
+            'maksimal' => empty($kapasitas) ? 0 : min($kapasitas),
+            'kekurangan' => $kekurangan,
+        ];
+    }
+
+    protected function stokDalamSatuanBom($bom): float
+    {
+        $stok = (float) $bom->bahanBaku->stok;
+
+        if ($bom->bahanBaku->satuan === 'kg' && $bom->satuan === 'gram') {
+            return $stok * 1000;
+        }
+
+        if ($bom->bahanBaku->satuan === 'liter' && $bom->satuan === 'ml') {
+            return $stok * 1000;
+        }
+
+        if ($bom->bahanBaku->satuan === 'gram' && $bom->satuan === 'kg') {
+            return $stok / 1000;
+        }
+
+        if ($bom->bahanBaku->satuan === 'ml' && $bom->satuan === 'liter') {
+            return $stok / 1000;
+        }
+
+        return $stok;
     }
     public function outlet()
     {

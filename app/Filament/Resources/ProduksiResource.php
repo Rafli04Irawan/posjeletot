@@ -7,6 +7,7 @@ use App\Models\Produksi;
 use App\Models\Produk;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,7 +22,7 @@ class ProduksiResource extends Resource
     protected static ?string $modelLabel = 'Produksi';
     protected static ?string $pluralModelLabel = 'Produksi';
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-    protected static ?string $navigationGroup = 'Manajemen POS';
+    protected static ?string $navigationGroup = 'Persediaan';
     protected static ?string $navigationLabel = 'Produksi';
 
     public static function form(Form $form): Form
@@ -31,6 +32,7 @@ class ProduksiResource extends Resource
                 ->label('Produk yang Diproduksi')
                 ->options(Produk::pluck('nama_produk', 'id'))
                 ->searchable()
+                ->live()
                 ->required(),
 
             Forms\Components\TextInput::make('jumlah')
@@ -38,7 +40,30 @@ class ProduksiResource extends Resource
                 ->numeric()
                 ->suffix('pcs')
                 ->required()
-                ->minValue(1),
+                ->minValue(1)
+                ->live()
+                ->helperText(function (Get $get): string {
+                    if (!$get('produk_id')) {
+                        return 'Pilih produk untuk melihat kapasitas berdasarkan bahan baku.';
+                    }
+
+                    $produk = Produk::find($get('produk_id'));
+                    if (!$produk) {
+                        return '';
+                    }
+
+                    $perhitungan = $produk->hitungProduksi((int) ($get('jumlah') ?: 0));
+                    $pesan = 'Maksimal dapat dibuat: ' . number_format($perhitungan['maksimal'], 0, ',', '.') . ' pcs.';
+
+                    if ($perhitungan['kekurangan']) {
+                        $namaBahan = collect($perhitungan['kekurangan'])
+                            ->pluck('nama')
+                            ->implode(', ');
+                        $pesan .= ' Stok kurang: ' . $namaBahan . '.';
+                    }
+
+                    return $pesan;
+                }),
             Forms\Components\Select::make('outlet_id')
             ->label('Outlet')
             ->relationship('outlet', 'nama_outlet')

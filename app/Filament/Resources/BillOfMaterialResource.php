@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 
 class BillOfMaterialResource extends Resource
@@ -17,7 +18,7 @@ class BillOfMaterialResource extends Resource
     protected static ?string $model = BillOfMaterial::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationGroup = 'Manajemen POS';
+    protected static ?string $navigationGroup = 'Persediaan';
     protected static ?string $navigationLabel = 'Bill of Material';
 
     public static function form(Form $form): Form
@@ -80,6 +81,11 @@ class BillOfMaterialResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->produk->jumlahBisaDibuat() . ' pcs';
                     }),
+            ])
+            ->groups([
+                Group::make('produk.nama_produk')
+                    ->label('Produk Jadi')
+                    ->collapsible(),
             ])
             ->defaultGroup('produk.nama_produk')
             ->filters([

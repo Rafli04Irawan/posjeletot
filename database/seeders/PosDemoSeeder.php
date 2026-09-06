@@ -40,9 +40,9 @@ class PosDemoSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         $outlets = collect([
-            ['nama_outlet' => 'Outlet Pusat', 'alamat' => 'Jl. Merdeka No. 1'],
-            ['nama_outlet' => 'Outlet Cabang 1', 'alamat' => 'Jl. Sudirman No. 10'],
-            ['nama_outlet' => 'Outlet Cabang 2', 'alamat' => 'Jl. Asia Afrika No. 22'],
+            ['nama_outlet' => 'Cibiru', 'alamat' => 'Jl. Merdeka No. 1'],
+            ['nama_outlet' => 'Bumi Harapan', 'alamat' => 'Jl. Sudirman No. 10'],
+            ['nama_outlet' => 'Panyileukan', 'alamat' => 'Jl. Asia Afrika No. 22'],
         ])->map(function (array $data) {
             return Outlet::create($data);
         });
@@ -70,17 +70,17 @@ class PosDemoSeeder extends Seeder
             [
                 'nama_produk' => 'Cireng Keju',
                 'deskripsi' => 'Cireng renyah dengan keju leleh.',
-                'harga' => 8000,
-                'stok' => 40,
+                'harga' => 2500,
+                'stok' => 50,
                 'kategori_id' => $categories[0]->id,
                 'gambar' => null,
-                'outlet_id' => $outlets[0]->id,
+                'outlet_id' => $outlets[1]->id,
             ],
             [
                 'nama_produk' => 'Cireng Pedas',
                 'deskripsi' => 'Cireng pedas dengan sambal cabai.',
-                'harga' => 7500,
-                'stok' => 35,
+                'harga' => 2500,
+                'stok' => 50,
                 'kategori_id' => $categories[0]->id,
                 'gambar' => null,
                 'outlet_id' => $outlets[1]->id,
@@ -88,11 +88,11 @@ class PosDemoSeeder extends Seeder
             [
                 'nama_produk' => 'Gehu Pedas',
                 'deskripsi' => 'Gehu tahu pedas dengan bumbu rumah.',
-                'harga' => 9000,
-                'stok' => 30,
+                'harga' => 2500,
+                'stok' => 50,
                 'kategori_id' => $categories[1]->id,
                 'gambar' => null,
-                'outlet_id' => $outlets[2]->id,
+                'outlet_id' => $outlets[1]->id,
             ],
         ])->map(function (array $data) {
             return Produk::create($data);
@@ -107,19 +107,19 @@ class PosDemoSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Pegawai Cabang 1',
-            'email' => 'pegawai1@gmail.com',
+            'name' => 'Cibiru',
+            'email' => 'cibiru@gmail.com',
             'password' => Hash::make('password123'),
             'role' => 'pegawai',
-            'outlet_id' => $outlets[1]->id,
+            'outlet_id' => $outlets[0]->id,
         ]);
 
         User::create([
-            'name' => 'Pegawai Cabang 2',
-            'email' => 'pegawai2@gmail.com',
+            'name' => 'Bumhar',
+            'email' => 'bumhar@gmail.com',
             'password' => Hash::make('password123'),
             'role' => 'pegawai',
-            'outlet_id' => $outlets[2]->id,
+            'outlet_id' => $outlets[1]->id,
         ]);
 
         $bomData = [

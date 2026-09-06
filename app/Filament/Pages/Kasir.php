@@ -153,6 +153,11 @@ class Kasir extends Page
             return;
         }
 
+        if ($this->metodePembayaran === 'qris' && $bayar > $total) {
+            session()->flash('error', 'QRIS tidak dapat digunakan jika ada kembalian. Pilih CASH.');
+            return;
+        }
+
         if ($bayar < $total) {
             session()->flash('error', 'Uang kurang!');
             return;
@@ -220,7 +225,18 @@ class Kasir extends Page
 
     public function pilihMetode(string $metode)
     {
+        if ($metode === 'qris' && $this->bayar > $this->total) {
+            session()->flash('error', 'QRIS tidak dapat digunakan jika ada kembalian. Pilih CASH.');
+            return;
+        }
+
         $this->metodePembayaran = $metode;
+
+        if ($metode === 'qris') {
+            $this->bayar = $this->total;
+            $this->bayarFormatted = number_format($this->total, 0, ',', '.');
+            $this->kembalian = 0;
+        }
 
         $this->prosesBayar();
     }
